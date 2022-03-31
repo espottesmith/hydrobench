@@ -1,0 +1,179 @@
+import csv
+import os
+import difflib
+import statistics
+
+import numpy as np
+from scipy.stats import linregress
+
+import matplotlib.pyplot as plt
+
+hybrid = {"global": {"PBE0": 0.25,
+                     "PBE0-D3(BJ)": 0.25,
+                     "B3LYP": 0.20,
+                     "B3LYP-D3(BJ)": 0.20,
+                     "mPW1PW91": 0.25,
+                     "mPW1PW91-D3(BJ)": 0.25,
+                     "M06-2X": 0.54,
+                      "M06-2X-D3(0)": 0.54,
+                      "M06-HF": 1.0,
+                      "M08-SO": 0.57,
+                      "MN15": 0.44,
+                      "BMK": 0.42,
+                      "BMK-D3(BJ)": 0.42,
+                      "TPSSh": 0.1,
+                      "TPSSh-D3(BJ)": 0.1,
+                      "SCAN0": 0.25,
+                      "mPWB1K": 0.44,
+                      "mPWB1K-D3(BJ)": 0.44},
+          "range-separated": {"CAM-B3LYP": 0.19,
+                              "CAM-B3LYP-D3(0)": 0.19,
+                              "wB97X": 0.16,
+                              "wB97XD": 0.22,
+                              "wB97XD3": 0.20,
+                              "wB97XV": 0.17,
+                              "M11": 0.43,
+                              "wB97M-V": 0.15}
+          }
+
+SMALL_SIZE = 12
+MEDIUM_SIZE = 14
+LARGE_SIZE = 18
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+# plt.rc('title', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=LARGE_SIZE, titlesize=LARGE_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+
+base_dir = "/Users/ewcss/data/ssbt/20220211_benchmark"
+
+colors = {"global": "#516887", "range-separated": "#A9FADB"}
+
+vac_mae = {x: dict() for x in hybrid}
+vac_rel = {x: dict() for x in hybrid}
+pcm_mae = {x: dict() for x in hybrid}
+pcm_rel = {x: dict() for x in hybrid}
+
+with open(os.path.join(base_dir, "abserrs_vacuum.csv")) as file:
+    reader = csv.reader(file)
+    for i, row in enumerate(reader):
+        if i == 0:
+            continue
+        elif row[0].lower() == "average" or "3c" in row[0].lower():
+            continue
+        funct = row[0]
+        if "CAM" in funct:
+            print(funct)
+
+        # if funct == "M06-HF":
+        #     continue
+
+        avg = float(row[-1])
+
+        for group, functs in hybrid.items():
+            if funct in functs:
+                vac_mae[group][funct] = avg
+                break
+
+with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
+    reader = csv.reader(file)
+    for i, row in enumerate(reader):
+        if i == 0:
+            continue
+        elif row[0].lower() == "average" or "3c" in row[0].lower():
+            continue
+        funct = row[0]
+        avg = float(row[-1])
+
+        # if funct == "M06-HF":
+        #     continue
+
+        for group, functs in hybrid.items():
+            if funct in functs:
+                vac_rel[group][funct] = avg
+                break
+
+with open(os.path.join(base_dir, "abserrs_IEF-PCM.csv")) as file:
+    reader = csv.reader(file)
+    for i, row in enumerate(reader):
+        if i == 0:
+            continue
+        elif row[0].lower() == "average" or "3c" in row[0].lower():
+            continue
+        funct = row[0]
+        avg = float(row[-1])
+
+        # if funct == "M06-HF":
+        #     continue
+
+        for group, functs in hybrid.items():
+            if funct in functs:
+                pcm_mae[group][funct] = avg
+                break
+
+with open(os.path.join(base_dir, "abserrs_rel_IEF-PCM.csv")) as file:
+    reader = csv.reader(file)
+    for i, row in enumerate(reader):
+        if i == 0:
+            continue
+        elif row[0].lower() == "average" or "3c" in row[0].lower():
+            continue
+        funct = row[0]
+        avg = float(row[-1])
+
+        # if funct == "M06-HF":
+        #     continue
+
+        for group, functs in hybrid.items():
+            if funct in functs:
+                pcm_rel[group][funct] = avg
+                break
+
+
+fig, axs = plt.subplots(2, 2, figsize=(10, 6))
+
+for i, dset in enumerate([vac_mae, vac_rel, pcm_mae, pcm_rel]):
+    print(i)
+    # print([f for f in dset["global"]])
+    # print([f for f in dset["range-separated"]])
+    x = i // 2
+    y = i % 2
+    ax = axs[x][y]
+
+    if y == 0:
+        ax.set_ylabel("MAE (eV)")
+    else:
+        ax.set_ylabel("MRAE (unitless)")
+
+    if x == 1:
+        ax.set_xlabel("HF exchange")
+
+    gx = list()
+    gy = list()
+    rsx = list()
+    rsy = list()
+
+    for funct in dset["global"]:
+        gx.append(hybrid["global"][funct])
+        gy.append(dset["global"][funct])
+
+    for funct in dset["range-separated"]:
+        rsx.append(hybrid["range-separated"][funct])
+        rsy.append(dset["range-separated"][funct])
+
+    gres = linregress(np.array(gx), np.array(gy))
+    print("Global: slope {}, intercept {}, R2 {}".format(gres.slope, gres.intercept, gres.rvalue ** 2))
+
+    rsres = linregress(np.array(rsx), np.array(rsy))
+    print("Range-separated: slope {}, intercept {}, R2 {}".format(rsres.slope, rsres.intercept, rsres.rvalue ** 2))
+
+    ax.scatter(gx, gy, c=colors["global"])
+    ax.scatter(rsx, rsy, c=colors["range-separated"], edgecolors="black")
+
+    ax.set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+
+plt.tight_layout()
+fig.savefig("hf_exchange_fraction.png", dpi=150)
+
+# plt.show()
