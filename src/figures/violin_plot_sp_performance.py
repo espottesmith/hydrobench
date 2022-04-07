@@ -3,6 +3,7 @@ import os
 import difflib
 import statistics
 
+import numpy as np
 import matplotlib.pyplot as plt
 
 SMALL_SIZE = 12
@@ -14,6 +15,14 @@ plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 plt.rc('axes', labelsize=LARGE_SIZE, titlesize=LARGE_SIZE)    # fontsize of the x and y labels
 plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+
+def adjacent_values(vals, q1, q3):
+    upper_adjacent_value = q3 + (q3 - q1) * 1.5
+    upper_adjacent_value = np.clip(upper_adjacent_value, q3, vals[-1])
+
+    lower_adjacent_value = q1 - (q3 - q1) * 1.5
+    lower_adjacent_value = np.clip(lower_adjacent_value, vals[0], q1)
+    return lower_adjacent_value, upper_adjacent_value
 
 base_dir = "/Users/ewcss/data/ssbt/20220211_benchmark"
 
@@ -36,8 +45,8 @@ with open(os.path.join(base_dir, "abserrs_vacuum.csv")) as file:
             continue
         funct = row[0]
 
-        if funct == "M06-HF" or funct == "B3LYP":
-            continue
+        # if funct == "M06-HF":
+        #     continue
 
         avg = float(row[-1])
 
@@ -55,8 +64,8 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
         funct = row[0]
         avg = float(row[-1])
 
-        if funct == "M06-HF" or funct == "B3LYP":            
-            continue                                         
+        # if funct == "M06-HF":
+        #     continue
 
         for group, functs in methods.items():
             if funct in functs:
@@ -97,7 +106,7 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
 #                 pcm_rel[group][funct] = avg
 
 
-fig, axs = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
+fig, axs = plt.subplots(2, 1, figsize=(14, 6), sharex=True)
 
 for i, dset in enumerate([vac_mae, vac_rel]):
     ax = axs[i]
@@ -115,32 +124,34 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     data = list()
 
     for group in xs:
-        data.append(sorted(list(dset[group].values())))
-        avg = statistics.mean(dset[group].values())
-        avgs.append(avg)
-        group_sort = sorted(dset[group].items(), key=lambda x: x[1])
-        print("\t min: {} ({}) max: {} ({}) avg: {}".format(group_sort[0][0], group_sort[0][1],
-                                                    group_sort[-1][0], group_sort[-1][1],
-                                                        avg))
-        lowlims.append(abs(avg - group_sort[0][1]))
-        uplims.append(abs(avg - group_sort[-1][1]))
+        data.append(np.array(sorted(list(dset[group].values()))))
 
-    # ax.bar(x=xs, height=avgs, yerr=[lowlims, uplims], color=["#ff595e", "#ffca3a", "#8ac926", "#1982c4"])
-    # ax.bar(x=range(1, len(xs) + 1), height=avgs, tick_label=xs, color=["#ff595e", "#ffca3a", "#8ac926", "#1982c4"], align="center")
-    # ax.set_xticklabels(xs, rotation=30, ha="right")
-    # ax2 = ax.twinx()
+    ax.violinplot(data, [1,2,3,4], showmeans=False, showmedians=False, showextrema=False)
 
-    bp = ax.boxplot(data, labels=xs, patch_artist=True)
-    for patch, color in zip(bp['boxes'], ["#ff595e", "#ffca3a", "#8ac926", "#1982c4"]):
-        patch.set_facecolor(color)
+    quartile1 = np.zeros(4)
+    medians = np.zeros(4)
+    quartile3 = np.zeros(4)
 
-    for median in bp['medians']:
-        median.set(color='black')
+    for i, d in enumerate(data):
+        q1, m, q3 = np.percentile(d, [25, 50, 75])
+        quartile1[i] = q1
+        medians[i] = m
+        quartile3[i] = q3
 
-    # ax.set_xticks(rotation=30, ha="right")
-    # ax.set_xticklabels(xs, rotation=30, ha="right")
+    whiskers = np.array([adjacent_values(sorted_array, q1, q3)
+                         for sorted_array, q1, q3 in zip(data, quartile1, quartile3)])
+
+    whiskers_min, whiskers_max = whiskers[:, 0], whiskers[:, 1]
+
+    inds = np.arange(1, len(medians) + 1)
+    ax.scatter(inds, medians, marker='o', color='white', s=30, zorder=3)
+    ax.vlines(inds, quartile1, quartile3, color='k', linestyle='-', lw=5)
+    ax.vlines(inds, whiskers_min, whiskers_max, color='k', linestyle='-', lw=1)
+
+    ax.set_xticks([1, 2, 3, 4])
+    ax.set_xticklabels(xs)
 
 plt.tight_layout()
-# fig.savefig("average_performance_sp_box.png", dpi=150)
-#
-# plt.show()
+fig.savefig("sp_performance_violin.png", dpi=150)
+
+plt.show()

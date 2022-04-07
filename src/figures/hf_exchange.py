@@ -48,7 +48,7 @@ plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 
 base_dir = "/Users/ewcss/data/ssbt/20220211_benchmark"
 
-colors = {"global": "#516887", "range-separated": "#A9FADB"}
+colors = {"global": "#8487B1", "range-separated": "#A9FADB"}
 
 vac_mae = {x: dict() for x in hybrid}
 vac_rel = {x: dict() for x in hybrid}
@@ -66,7 +66,7 @@ with open(os.path.join(base_dir, "abserrs_vacuum.csv")) as file:
         if "CAM" in funct:
             print(funct)
 
-        # if funct == "M06-HF":
+        # if funct == "M06-HF" or funct == "B3LYP":
         #     continue
 
         avg = float(row[-1])
@@ -86,7 +86,7 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
         funct = row[0]
         avg = float(row[-1])
 
-        # if funct == "M06-HF":
+        # if funct == "M06-HF" or funct == "B3LYP":
         #     continue
 
         for group, functs in hybrid.items():
@@ -94,59 +94,56 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
                 vac_rel[group][funct] = avg
                 break
 
-with open(os.path.join(base_dir, "abserrs_IEF-PCM.csv")) as file:
-    reader = csv.reader(file)
-    for i, row in enumerate(reader):
-        if i == 0:
-            continue
-        elif row[0].lower() == "average" or "3c" in row[0].lower():
-            continue
-        funct = row[0]
-        avg = float(row[-1])
-
-        # if funct == "M06-HF":
-        #     continue
-
-        for group, functs in hybrid.items():
-            if funct in functs:
-                pcm_mae[group][funct] = avg
-                break
-
-with open(os.path.join(base_dir, "abserrs_rel_IEF-PCM.csv")) as file:
-    reader = csv.reader(file)
-    for i, row in enumerate(reader):
-        if i == 0:
-            continue
-        elif row[0].lower() == "average" or "3c" in row[0].lower():
-            continue
-        funct = row[0]
-        avg = float(row[-1])
-
-        # if funct == "M06-HF":
-        #     continue
-
-        for group, functs in hybrid.items():
-            if funct in functs:
-                pcm_rel[group][funct] = avg
-                break
+# with open(os.path.join(base_dir, "abserrs_IEF-PCM.csv")) as file:
+#     reader = csv.reader(file)
+#     for i, row in enumerate(reader):
+#         if i == 0:
+#             continue
+#         elif row[0].lower() == "average" or "3c" in row[0].lower():
+#             continue
+#         funct = row[0]
+#         avg = float(row[-1])
+#
+#         # if funct == "M06-HF":
+#         #     continue
+#
+#         for group, functs in hybrid.items():
+#             if funct in functs:
+#                 pcm_mae[group][funct] = avg
+#                 break
+#
+# with open(os.path.join(base_dir, "abserrs_rel_IEF-PCM.csv")) as file:
+#     reader = csv.reader(file)
+#     for i, row in enumerate(reader):
+#         if i == 0:
+#             continue
+#         elif row[0].lower() == "average" or "3c" in row[0].lower():
+#             continue
+#         funct = row[0]
+#         avg = float(row[-1])
+#
+#         # if funct == "M06-HF":
+#         #     continue
+#
+#         for group, functs in hybrid.items():
+#             if funct in functs:
+#                 pcm_rel[group][funct] = avg
+#                 break
 
 
 fig, axs = plt.subplots(2, 2, figsize=(10, 6))
 
-for i, dset in enumerate([vac_mae, vac_rel, pcm_mae, pcm_rel]):
+for i, dset in enumerate([vac_mae, vac_rel]):
     print(i)
-    # print([f for f in dset["global"]])
-    # print([f for f in dset["range-separated"]])
-    x = i // 2
-    y = i % 2
-    ax = axs[x][y]
+    bax = axs[i][0]
+    ax = axs[i][1]
 
-    if y == 0:
-        ax.set_ylabel("MAE (eV)")
+    if i == 0:
+        bax.set_ylabel("MAE (eV)")
     else:
-        ax.set_ylabel("MRAE (unitless)")
+        bax.set_ylabel("MRAE (unitless)")
 
-    if x == 1:
+    if i == 1:
         ax.set_xlabel("HF exchange")
 
     gx = list()
@@ -154,21 +151,44 @@ for i, dset in enumerate([vac_mae, vac_rel, pcm_mae, pcm_rel]):
     rsx = list()
     rsy = list()
 
+    gx_fit = list()
+    gy_fit = list()
+
     for funct in dset["global"]:
         gx.append(hybrid["global"][funct])
         gy.append(dset["global"][funct])
+        if funct not in ["M06-HF", "B3LYP"]:
+            gx_fit.append(hybrid["global"][funct])
+            gy_fit.append(dset["global"][funct])
 
     for funct in dset["range-separated"]:
         rsx.append(hybrid["range-separated"][funct])
         rsy.append(dset["range-separated"][funct])
 
-    gres = linregress(np.array(gx), np.array(gy))
+    bp = bax.boxplot([sorted(list(dset["global"].values())),
+                      sorted(list(dset["range-separated"].values()))],
+                     labels=["Global", "Range-separted"],
+                     patch_artist=True,
+                     widths=0.6)
+
+    for patch, color in zip(bp['boxes'], [colors["global"], colors["range-separated"]]):
+        patch.set_facecolor(color)
+
+    for median in bp['medians']:
+        median.set(color='black')
+
+    gres = linregress(np.array(gx_fit), np.array(gy_fit))
     print("Global: slope {}, intercept {}, R2 {}".format(gres.slope, gres.intercept, gres.rvalue ** 2))
 
     rsres = linregress(np.array(rsx), np.array(rsy))
     print("Range-separated: slope {}, intercept {}, R2 {}".format(rsres.slope, rsres.intercept, rsres.rvalue ** 2))
 
-    ax.scatter(gx, gy, c=colors["global"])
+    fitx = np.linspace(0.1, 0.6, 100)
+    fity = fitx * gres.slope + gres.intercept
+
+    ax.plot(fitx, fity, c="black")
+
+    ax.scatter(gx, gy, c=colors["global"], edgecolors="black")
     ax.scatter(rsx, rsy, c=colors["range-separated"], edgecolors="black")
 
     ax.set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
