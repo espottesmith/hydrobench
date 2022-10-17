@@ -2,8 +2,6 @@ import copy
 import os
 
 from pymatgen.core.structure import Molecule
-from pymatgen.analysis.graphs import MoleculeGraph
-from pymatgen.analysis.local_env import OpenBabelNN
 
 from fireworks import LaunchPad, Workflow
 
@@ -13,13 +11,13 @@ from atomate.qchem.fireworks.core import SinglePointFW
 
 from atomate.vasp.powerups import add_tags
 
-lp = LaunchPad.from_file("/Users/ewcss/config/fireworks/ewcss_launchpad.yaml")
-db = QChemCalcDb.from_db_file("/Users/ewcss/config/fireworks/ewcss_db.json")
+lp = LaunchPad.from_file("launchpad.yaml")
+db = QChemCalcDb.from_db_file("db.json")
 
 # Geometry optimization: SCAN/def2-SVPD
 
-# General parameters:
-# - THRESH 14 (except CC?)
+# For MP2:
+# def2-TZVP, def2-TZVPP, def2-QZVPP
 
 # For CC:
 # CCSD: def2-TZVPP, def2-QZVPP
@@ -88,21 +86,15 @@ dft_basis = "def2-TZVPPD"
 ccsd_bases = ["def2-TZVPP", "def2-QZVPP"]
 ccsdt_bases = ["def2-SVP", "def2-TZVP"]
 
-mp2_bases = ["def2-TZVPP", "def2-QZVPP"]
+mp2_bases = ["def2-TZVP", "def2-TZVPP", "def2-QZVPP"]
 
-base_dir = "/Users/ewcss/data/ssbt/for_sp"
+base_dir = "../data/molecules/for_sp"
 
 finished = [e["task_label"] for e in db.db["tasks"].find({"tags.set": {"$in": ["20211016_sp_dft", "20211016_sp_cc"]}})]
 
 for mol_file in os.listdir(base_dir):
-    if "enamine" in mol_file:
-        continue
-
-    try:
-        mol = Molecule.from_file(os.path.join(base_dir, mol_file))
-        mol.set_charge_and_spin(int(mol_file.split(".")[0].split("_")[-1]))
-    except:
-        print(mol_file)
+    mol = Molecule.from_file(os.path.join(base_dir, mol_file))
+    mol.set_charge_and_spin(int(mol_file.split(".")[0].split("_")[-1]))
 
     for method in dft_methods:
         params = {"basis_set": dft_basis,
