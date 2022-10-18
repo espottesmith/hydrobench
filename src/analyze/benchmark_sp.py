@@ -1,20 +1,13 @@
 import copy
-import os
 import statistics
 
 from monty.serialization import loadfn, dumpfn
 
-from pymatgen.core.structure import Molecule
-from pymatgen.analysis.graphs import MoleculeGraph
-from pymatgen.analysis.local_env import OpenBabelNN
+all_sp = loadfn("../data/dft/from_scan/dft_sp.json")
 
-all_sp = loadfn("/Users/ewcss/data/ssbt/20220204_sp_benchmark/dft_sp.json")
+reference_vac_pcm = loadfn("../data/reference/mp2_super.json")
 
-# reference_vac_pcm = loadfn("/Users/ewcss/data/ssbt/20220205_reparse/cc_corrected_full.json")
-# reference_vac_pcm = loadfn("/Users/ewcss/data/ssbt/20220205_reparse/cc_corrected_t.json")
-reference_vac_pcm = loadfn("/Users/ewcss/data/ssbt/20220211_mp2/mp2_super.json")
-
-r2scan3c_tasks = loadfn("/Users/ewcss/data/ssbt/20220211_r2scan3c/r2scan3c_energies_defgrid3.json")
+r2scan3c_tasks = loadfn("../data/dft/from_scan/r2scan3c_energies_defgrid3.json")
 
 replacements = {"amide_1_1": "amide11",
                 "amide_1_2": "amide12",
@@ -80,7 +73,7 @@ for rxn in rxns:
             compiled[rxn][solv]["reference"]["ts"] = reference_vac_pcm.get("{}_ts_{}".format(rxn, solv))
             compiled[rxn][solv]["reference"]["pro"] = reference_vac_pcm.get("{}_pro_{}".format(rxn, solv))
 
-dumpfn(compiled, "/Users/ewcss/data/ssbt/20220211_benchmark/dft_compiled_data.json")
+dumpfn(compiled, "../data/dft/from_scan/dft_compiled_data.json")
 
 rxns = sorted(list(rxns))
 methods = list(methods)
@@ -156,7 +149,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("/Users/ewcss/data/ssbt/20220211_benchmark/errs_{}.csv".format(solv), "w") as file:
+    with open("../data/results/mp2_super/errs_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")
@@ -174,7 +167,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("/Users/ewcss/data/ssbt/20220211_benchmark/abserrs_{}.csv".format(solv), "w") as file:
+    with open("../data/results/mp2_super/abserrs_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")

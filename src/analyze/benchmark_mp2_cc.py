@@ -8,13 +8,13 @@ from pymatgen.core.structure import Molecule
 from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
 
-all_sp = loadfn("/Users/ewcss/data/ssbt/ssbt_dft_sp.json")
+all_sp = loadfn("../data/dft/ssbt_dft_sp.json")
 
-t_corrected = loadfn("/Users/ewcss/data/ssbt/20220205_reparse/cc_corrected_t.json")
-small_corrected = loadfn("/Users/ewcss/data/ssbt/20220205_reparse/cc_corrected_small.json")
-full_corrected = loadfn("/Users/ewcss/data/ssbt/20220205_reparse/cc_corrected_full.json")
+t_corrected = loadfn("../data/reference/cc_corrected_t.json")
+small_corrected = loadfn("../data/reference/cc_corrected_small.json")
+full_corrected = loadfn("../data/reference/cc_corrected_full.json")
 
-mp2 = loadfn("/Users/ewcss/data/ssbt/20220211_mp2/mp2_super.json")
+mp2 = loadfn("../data/reference/mp2_super.json")
 
 compiled = dict()
 
@@ -51,7 +51,7 @@ for rxn in rxns:
             compiled[rxn][solv][method]["ts"] = data.get("{}_ts_{}".format(rxn, solv))
             compiled[rxn][solv][method]["pro"] = data.get("{}_pro_{}".format(rxn, solv))
 
-dumpfn(compiled, "/Users/ewcss/data/ssbt/20220201_cc/wavefunction_compiled.json")
+dumpfn(compiled, "../data/reference/wavefunction_compiled.json")
 
 rxns = sorted(list(rxns))
 

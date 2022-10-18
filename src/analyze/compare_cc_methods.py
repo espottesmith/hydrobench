@@ -1,18 +1,12 @@
-import copy
-import os
 import statistics
 
 from monty.serialization import loadfn, dumpfn
 
-from pymatgen.core.structure import Molecule
-from pymatgen.analysis.graphs import MoleculeGraph
-from pymatgen.analysis.local_env import OpenBabelNN
-
 all_sp = loadfn("/Users/ewcss/data/ssbt/ssbt_dft_sp.json")
 
-t_corrected = loadfn("/Users/ewcss/data/ssbt/20220201_cc/corrected_t_cc_data.json")
-small_corrected = loadfn("/Users/ewcss/data/ssbt/20220201_cc/corrected_small_cc_data.json")
-full_corrected = loadfn("/Users/ewcss/data/ssbt/20220201_cc/full_corrected_cc_data.json")
+t_corrected = loadfn("../data/reference/corrected_t_cc_data.json")
+small_corrected = loadfn("../data/reference/corrected_small_cc_data.json")
+full_corrected = loadfn("../data/reference/full_corrected_cc_data.json")
 
 compiled = dict()
 
@@ -48,7 +42,7 @@ for rxn in rxns:
             compiled[rxn][solv][method]["ts"] = data.get("{}_ts_{}".format(rxn, solv))
             compiled[rxn][solv][method]["pro"] = data.get("{}_pro_{}".format(rxn, solv))
 
-dumpfn(compiled, "/Users/ewcss/data/ssbt/20220201_cc/cc_compiled.json")
+dumpfn(compiled, "../data/reference/cc_compiled.json")
 
 rxns = sorted(list(rxns))
 
