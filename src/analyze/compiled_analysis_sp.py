@@ -1,8 +1,7 @@
 import csv
 import os
-import difflib
 
-base_dir = "/Users/ewcss/data/ssbt/20220211_benchmark"
+base_dir = "../data/results/mp2_super"
 
 vac_mae = dict()
 vac_rel = dict()

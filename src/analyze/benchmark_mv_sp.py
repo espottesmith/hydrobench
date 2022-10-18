@@ -1,20 +1,9 @@
-import copy
-import os
 import statistics
 
 from monty.serialization import loadfn, dumpfn
 
-from pymatgen.core.structure import Molecule
-from pymatgen.analysis.graphs import MoleculeGraph
-from pymatgen.analysis.local_env import OpenBabelNN
-
-all_sp = loadfn("/Users/ewcss/data/ssbt/20220313_mvopt/dft_sp.json")
-
-# reference_vac_pcm = loadfn("/Users/ewcss/data/ssbt/20220205_reparse/cc_corrected_full.json")
-# reference_vac_pcm = loadfn("/Users/ewcss/data/ssbt/20220205_reparse/cc_corrected_t.json")
-reference_vac_pcm = loadfn("/Users/ewcss/data/ssbt/20220313_mvopt/mvopt_svpd_reference_data.json")
-
-# r2scan3c_tasks = loadfn("/Users/ewcss/data/ssbt/20220211_r2scan3c/r2scan3c_energies_defgrid3.json")
+all_sp = loadfn("../data/dft/from_mv/dft_sp.json")
+reference_vac_pcm = loadfn("../data/reference/mvopt_svpd_reference_data.json")
 
 replacements = {"amide_1_1": "amide11",
                 "amide_1_2": "amide12",
@@ -69,7 +58,7 @@ for rxn in rxns:
             compiled[rxn][solv]["reference"]["ts"] = reference_vac_pcm[rxn][solv]["ts"]["total_corrected"]
             compiled[rxn][solv]["reference"]["pro"] = reference_vac_pcm[rxn][solv]["pro"]["total_corrected"]
 
-dumpfn(compiled, "/Users/ewcss/data/ssbt/20220313_mvopt/dft_compiled_data.json")
+dumpfn(compiled, "../data/dft/from_mv/dft_compiled_data.json")
 
 rxns = sorted(list(rxns))
 methods = list(methods)
@@ -130,9 +119,6 @@ for method in methods:
                 methods_errs[method].append(None)
                 methods_abserrs[method].append(None)
 
-# print(order)
-# print(methods_abserrs["r2SCAN3c"])
-
 for solv in solvs:
     appro_indices = [i for i, e in enumerate(order) if solv in e]
     header = ["method"] + [e for i, e in enumerate(order) if i in appro_indices] + ["Average"]
@@ -145,7 +131,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("/Users/ewcss/data/ssbt/20220313_mvopt/errs_{}.csv".format(solv), "w") as file:
+    with open("../data/results/mv/errs_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")
@@ -163,7 +149,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("/Users/ewcss/data/ssbt/20220313_mvopt/abserrs_{}.csv".format(solv), "w") as file:
+    with open("../data/results/mv/abserrs_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")
