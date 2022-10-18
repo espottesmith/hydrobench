@@ -4,10 +4,6 @@ import statistics
 
 from monty.serialization import loadfn, dumpfn
 
-from pymatgen.core.structure import Molecule
-from pymatgen.analysis.graphs import MoleculeGraph
-from pymatgen.analysis.local_env import OpenBabelNN
-
 
 mp2 = loadfn("/Users/ewcss/data/ssbt/20220211_mp2/mp2_corrected_full.json")
 cc = loadfn("/Users/ewcss/data/ssbt/20220205_reparse/grouped_cc_data.json")

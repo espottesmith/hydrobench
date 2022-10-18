@@ -1,14 +1,9 @@
 import copy
 import os
-import statistics
 
 import numpy as np
 
-from monty.serialization import loadfn, dumpfn
-
-from pymatgen.core.structure import Molecule
-from pymatgen.analysis.graphs import MoleculeGraph
-from pymatgen.analysis.local_env import OpenBabelNN
+from monty.serialization import dumpfn
 
 from atomate.qchem.database import QChemCalcDb
 
@@ -20,10 +15,11 @@ def correct_wft(e1, e2, n1, n2, beta):
     return (n1 ** beta * e1 - n2 ** beta * e2) / (n1 ** beta - n2 ** beta)
 
 
-db = QChemCalcDb.from_db_file("/Users/ewcss/config/fireworks/ewcss_db.json")
+db = QChemCalcDb.from_db_file("db.json")
 
-base_dir = "/Users/ewcss/data/ssbt/20220204_sp_benchmark"
+base_dir = "XXX"
 
+# Make naming consistent
 replacements = {"amide_1_1": "amide11",
                 "amide_1_2": "amide12",
                 "amide_2_1": "amide21",
@@ -33,6 +29,12 @@ replacements = {"amide_1_1": "amide11",
                 }
 
 dft_data = [e for e in db.db["tasks"].find({"tags.set": "20211016_sp_dft"}) if "SMD" not in e["task_label"]]
+for d in dft_data:
+    try:
+        del d["custodian"]
+    except:
+        continue
+
 cc_data = [e for e in db.db["tasks"].find({"tags.set": "20211016_sp_cc"}) if "SMD" not in e["task_label"]]
 
 for calc in dft_data + cc_data:
@@ -50,7 +52,7 @@ all_cc_data = {
         "ccsdt_corr": e["calcs_reversed"][0].get("ccsd(t)_total_energy")
     } for e in cc_data if "SMD" not in e["task_label"]}
 
-dumpfn(dft_data, os.path.join(base_dir, "dft_sp.json"))
+dumpfn(dft_data, os.path.join(base_dir, "dft_sp_20211016.json"))
 dumpfn(cc_data, os.path.join(base_dir, "cc_sp.json"))
 
 alpha_svp_tzvp = 10.390
@@ -131,7 +133,7 @@ for groupname, groupdata in groups.items():
 
 dumpfn(corrected_small_data, os.path.join(base_dir, "cc_corrected_small.json"))
 
-# Not currently correcting HF or CCSD
+# Not correcting HF or CCSD
 # Only applying an extrapolation to (T), due to issues with QZVPP calculations
 corrected_data = dict()
 for groupname, groupdata in groups.items():
