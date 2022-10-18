@@ -27,7 +27,7 @@ ccsdt_bases = ["def2-TZVP"]
 
 mp2_bases = ["def2-TZVP", "def2-TZVPP", "def2-QZVPP"]
 
-base_dir = "/Users/ewcss/data/ssbt/optimized_mv"
+base_dir = "../data/molecules/mv"
 
 finished = [e["task_label"] for e in db.db["tasks"].find({"tags.set": {"$in": ["20220309_mv_sp_dft", "20220309_mv_sp_wf"]}})]
 
