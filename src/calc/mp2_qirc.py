@@ -1,21 +1,15 @@
 import copy
-import os
 
 from pymatgen.core.structure import Molecule
-from pymatgen.analysis.graphs import MoleculeGraph
-from pymatgen.analysis.local_env import OpenBabelNN
 
-from fireworks import LaunchPad, Workflow
+from fireworks import LaunchPad
 
 from atomate.qchem.database import QChemCalcDb
-
-from atomate.qchem.fireworks.core import SinglePointFW, OptimizeFW, FrequencyFlatteningTransitionStateFW
 from atomate.qchem.workflows.base.reaction_path import get_wf_reaction_path_with_ts
-
 from atomate.common.powerups import add_tags
 
-lp = LaunchPad.from_file("/Users/ewcss/config/fireworks/ewcss_launchpad.yaml")
-db = QChemCalcDb.from_db_file("/Users/ewcss/config/fireworks/ewcss_db.json")
+lp = LaunchPad.from_file("launchpad.yaml")
+db = QChemCalcDb.from_db_file("db.json")
 
 finished = [e["task_label"] for e in db.db["tasks"].find({"tags.set": {"$in": ["20220219_mp2_qirc"]}})]
 

@@ -2,21 +2,16 @@ import copy
 import os
 
 from pymatgen.core.structure import Molecule
-from pymatgen.analysis.graphs import MoleculeGraph
-from pymatgen.analysis.local_env import OpenBabelNN
 
 from fireworks import LaunchPad, Workflow
 
 from atomate.qchem.database import QChemCalcDb
-
 from atomate.qchem.fireworks.core import SinglePointFW, OptimizeFW
-
 from atomate.vasp.powerups import add_tags
 
-lp = LaunchPad.from_file("/Users/ewcss/config/fireworks/ewcss_launchpad.yaml")
-db = QChemCalcDb.from_db_file("/Users/ewcss/config/fireworks/ewcss_db.json")
+lp = LaunchPad.from_file("launchpad.yaml")
+db = QChemCalcDb.from_db_file("db.json")
 
-# Eventually reopt in def2-TZVPPD
 basis = "def2-SVP"
 
 constraints = {"diazonium_ts_1": ["4 12 2.255", "4 14 2.438"],
@@ -25,7 +20,7 @@ constraints = {"diazonium_ts_1": ["4 12 2.255", "4 14 2.438"],
                "carbonate_ts_-1": ["1 5 1.738", "1 7 2.110"],
                "amide_2_2_ts_-1": ["2 9 1.834", "4 8 1.005", "8 16 1.712", "9 12 1.208", "12 16 1.312"]}
 
-base_dir = "/Users/ewcss/data/ssbt/for_sp"
+base_dir = "../data/molecules/for_sp"
 
 finished = [e["task_label"] for e in db.db["tasks"].find({"tags.set": {"$in": ["20220130_opt_benchmark_constopts"]}})]
 
