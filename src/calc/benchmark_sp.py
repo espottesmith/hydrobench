@@ -35,7 +35,7 @@ db = QChemCalcDb.from_db_file("db.json")
 # - VV10
 # - rVV10
 #
-# Meta-GGA (7):
+# Meta-GGA (9):
 # - M06-L
 # - M06-L-D3
 # - SCAN
@@ -43,32 +43,51 @@ db = QChemCalcDb.from_db_file("db.json")
 # - TPSS
 # - TPSS-D3
 # - MN12-L
+# - MN12-L-D3
 # - B97M-rV
 #
-# Hybrid GGA (11):
+# Hybrid GGA (20):
 # - PBE0 (global)
 # - PBE0-D3 (global)
+# - LRC-wPBE (range-separated)
+# - LRC-wPBE-D3 (range-separated)
+# - LRC-wPBEh (range-separated)
+# - LRC-wPBEh-D3 (range-separated)
 # - B3LYP (global)
 # - B3LYP-D3 (global)
 # - CAM-B3LYP (range-separated)
 # - CAM-B3LYP-D3 (range-separated)
+# - rCAM-B3LYP (range-separated)
+# - rCAM-B3LYP-D3 (range-separated)
 # - mPW1PW91 (global)
 # - mPW1PW91-D3 (global)
+# - HSE-HJS (range-separated)
+# - HSE-HJS-D3 (range-separated)
 # - wB97X (range-separated)
 # - wB97X-D (range-separated)
 # - wB97X-D3 (range-separated)
 # - wB97X-V (range-separated)
 #
-# Hybrid Meta-GGA (13):
+# Hybrid Meta-GGA (24):
 # - M06-2X (global)
 # - M06-2X-D3 (global)
+# - wM06-D3 (range-separated)
+# - M06-SX (range-separated)
+# - M06-SX-D3 (range-separated)
 # - M06-HF (global)
+# - M06-HF-D3 (global)
 # - M08-SO (global)
+# - M08-SO-D3 (global)
 # - M11 (range-separated)
+# - M11-D3 (range-separated)
+# - revM11 (range-separated)
+# - revM11-D3 (range-separated)
 # - MN15 (global)
+# - MN15-D3 (global)
 # - BMK (global)
 # - BMK-D3 (global)
 # - TPSSh (global)
+# - TPSSh-D3 (global)
 # - SCAN0 (global)
 # - SCAN0-D3 (global)
 # - MPWB1K (global)
@@ -78,8 +97,8 @@ db = QChemCalcDb.from_db_file("db.json")
 
 dft_methods = ["PBE", ("PBE", "D3(BJ)"), "BLYP", ("BLYP", "D3(BJ)"), "B97-D", "B97-D3", "mPW91", ("mPW91", "D3(BJ)"), "VV10", "rVV10",
                "M06-L", ("M06-L", "D3(0)"), "SCAN", ("SCAN", "D3(BJ)"), "TPSS", ("TPSS", "D3(BJ)"), "MN12-L", ("MN12-L", "D3(BJ)"), "B97M-rV",
-               "PBE0", ("PBE0", "D3(BJ)"), "B3LYP", ("B3LYP", "D3(BJ)"), "CAM-B3LYP", ("CAM-B3LYP", "D3(0)"), "mPW1PW91", ("mPW1PW91", "D3(BJ)"), "wB97X", "wB97XD", "wB97XD3", "wB97XV",
-               "M06-2X", ("M06-2X", "D3(0)"), "M06-HF", "M08-SO", "M11", "MN15", "BMK", ("BMK", "D3(BJ)"), "TPSSh", ("TPSSh", "D3(BJ)"), "SCAN0", "mPWB1K", ("mPWB1K", "D3(BJ)"), "wB97M-V"]
+               "PBE0", ("PBE0", "D3(BJ)"), "LRC-wPBE", ("LRC-wPBE", "D3(BJ)"), "LRC-wPBEh", ("LRC-wPBEh", "D3(BJ)"), "B3LYP", ("B3LYP", "D3(BJ)"), "CAM-B3LYP", ("CAM-B3LYP", "D3(0)"), "rCAM-B3LYP", ("rCAM-B3LYP", "D3(0)"), "mPW1PW91", ("mPW1PW91", "D3(BJ)"), "HSE-HJS", ("HSE-HJS", "D3(BJ)"), "wB97X", "wB97XD", "wB97XD3", "wB97XV",
+               "M06-2X", ("M06-2X", "D3(0)"), "wM06-D3", "M06-SX", ("M06-SX", "D3(BJ)"), "M06-HF", ("M06-HF", "D3(0)"), "M08-SO", ("M08-SO", "D3(0)"), "M11", ("M11", "D3(0)"), "revM11", ("revM11", "D3(0)"), "MN15", ("MN15", "D3(0)"), "BMK", ("BMK", "D3(BJ)"), "TPSSh", ("TPSSh", "D3(BJ)"), "SCAN0", ("SCAN0", "D3(BJ)"), "mPWB1K", ("mPWB1K", "D3(BJ)"), "wB97M-V"]
 
 dft_basis = "def2-TZVPPD"
 

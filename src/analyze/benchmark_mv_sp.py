@@ -2,7 +2,7 @@ import statistics
 
 from monty.serialization import loadfn, dumpfn
 
-all_sp = loadfn("../data/dft/from_mv/dft_sp.json")
+all_sp = loadfn("../data/dft/newmv/dft_sp.json")
 reference_vac_pcm = loadfn("../data/reference/mvopt_svpd_reference_data.json")
 
 replacements = {"amide_1_1": "amide11",
@@ -58,7 +58,7 @@ for rxn in rxns:
             compiled[rxn][solv]["reference"]["ts"] = reference_vac_pcm[rxn][solv]["ts"]["total_corrected"]
             compiled[rxn][solv]["reference"]["pro"] = reference_vac_pcm[rxn][solv]["pro"]["total_corrected"]
 
-dumpfn(compiled, "../data/dft/from_mv/dft_compiled_data.json")
+dumpfn(compiled, "../data/dft/newmv/dft_compiled_data.json")
 
 rxns = sorted(list(rxns))
 methods = list(methods)
@@ -131,7 +131,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("../data/results/mv/errs_{}.csv".format(solv), "w") as file:
+    with open("../data/results/newmv/errs_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")
@@ -149,7 +149,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("../data/results/mv/abserrs_{}.csv".format(solv), "w") as file:
+    with open("../data/results/newmv/abserrs_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")

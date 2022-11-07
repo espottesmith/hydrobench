@@ -3,7 +3,9 @@ import statistics
 
 from monty.serialization import loadfn, dumpfn
 
-all_sp = loadfn("../data/dft/from_scan/dft_sp.json")
+from pymatgen.core.structure import Molecule
+
+all_sp = loadfn("../data/dft/new/dft_sp.json")
 
 reference_vac_pcm = loadfn("../data/reference/mp2_super.json")
 
@@ -39,7 +41,13 @@ methods = set()
 solvs = ["vacuum", "IEF-PCM"]
 
 for datapoint in all_sp:
-    name = datapoint["task_label"]
+    name = copy.deepcopy(datapoint["task_label"])
+    for a, b in replacements.items():
+        name = name.replace(a, b)
+
+    if name.startswith("_"):
+        name = "epoxide2_pro_1" + name
+
     contents = name.split("_")
     rxn = contents[0]
     state = contents[1]
@@ -73,7 +81,7 @@ for rxn in rxns:
             compiled[rxn][solv]["reference"]["ts"] = reference_vac_pcm.get("{}_ts_{}".format(rxn, solv))
             compiled[rxn][solv]["reference"]["pro"] = reference_vac_pcm.get("{}_pro_{}".format(rxn, solv))
 
-dumpfn(compiled, "../data/dft/from_scan/dft_compiled_data.json")
+dumpfn(compiled, "../data/dft/new/dft_compiled_data.json")
 
 rxns = sorted(list(rxns))
 methods = list(methods)
@@ -146,10 +154,11 @@ for solv in solvs:
         try:
             line = [method] + [str(d) for d in this_data] + [str(statistics.mean([d for d in this_data if d is not None]))]
         except statistics.StatisticsError:
+            print("STATS ERROR", method, solv)
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("../data/results/mp2_super/errs_{}.csv".format(solv), "w") as file:
+    with open("../data/results/new/errs_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")
@@ -167,7 +176,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("../data/results/mp2_super/abserrs_{}.csv".format(solv), "w") as file:
+    with open("../data/results/new/abserrs_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")

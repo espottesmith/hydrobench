@@ -3,7 +3,7 @@ import statistics
 
 from monty.serialization import loadfn, dumpfn
 
-all_sp = loadfn("../data/dft/from_scan/dft_sp.json")
+all_sp = loadfn("../data/dft/new/dft_sp.json")
 reference_vac_pcm = loadfn("../data/reference/mp2_super.json")
 
 r2scan3c_tasks = loadfn("../data/dft/from_scan/r2scan3c_energies_defgrid3.json")
@@ -39,6 +39,12 @@ solvs = ["vacuum", "IEF-PCM"]
 
 for datapoint in all_sp:
     name = datapoint["task_label"]
+    for a, b in replacements.items():
+        name = name.replace(a, b)
+
+    if name.startswith("_"):
+        name = "epoxide2_pro_1" + name
+
     contents = name.split("_")
     rxn = contents[0]
     state = contents[1]
@@ -72,7 +78,7 @@ for rxn in rxns:
             compiled[rxn][solv]["reference"]["ts"] = reference_vac_pcm.get("{}_ts_{}".format(rxn, solv))
             compiled[rxn][solv]["reference"]["pro"] = reference_vac_pcm.get("{}_pro_{}".format(rxn, solv))
 
-dumpfn(compiled, "../data/dft/from_scan/dft_compiled_data.json")
+# dumpfn(compiled, "../data/dft/new/dft_compiled_data.json")
 
 rxns = sorted(list(rxns))
 methods = list(methods)
@@ -145,7 +151,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("../data/results/mp2_super/errs_rel_{}.csv".format(solv), "w") as file:
+    with open("../data/results/new/errs_rel_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")
@@ -163,7 +169,7 @@ for solv in solvs:
             continue
         alldata.append(line)
     alldata = sorted(alldata, key=lambda x: float(x[-1]))
-    with open("../data/results/mp2_super/abserrs_rel_{}.csv".format(solv), "w") as file:
+    with open("../data/results/new/abserrs_rel_{}.csv".format(solv), "w") as file:
         file.write(",".join(header) + "\n")
         for line in alldata:
             file.write(",".join(line) + "\n")
