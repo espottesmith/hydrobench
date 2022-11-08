@@ -17,28 +17,46 @@ hybrid = {"global": {"PBE0": 0.25,
                      "M06-2X": 0.54,
                       "M06-2X-D3(0)": 0.54,
                       "M06-HF": 1.0,
+                      "M06-HF-D3(0)": 1.0,
                       "M08-SO": 0.57,
+                      "M08-SO-D3(0)": 0.57,
                       "MN15": 0.44,
+                      "MN15-D3(0)": 0.44,
                       "BMK": 0.42,
                       "BMK-D3(BJ)": 0.42,
                       "TPSSh": 0.1,
                       "TPSSh-D3(BJ)": 0.1,
                       "SCAN0": 0.25,
+                      "SCAN0-D3(BJ)": 0.25,
                       "mPWB1K": 0.44,
                       "mPWB1K-D3(BJ)": 0.44},
-          "range-separated": {"CAM-B3LYP": 0.19,
+          "range-separated": {"LRC-wPBE": 0.0,
+                              "LRC-wPBE-D3(BJ)": 0.0,
+                              "LRC-wPBEh": 0.2,
+                              "LRC-wPBEh-D3(BJ)": 0.2,
+                              "CAM-B3LYP": 0.19,
                               "CAM-B3LYP-D3(0)": 0.19,
+                              "rCAM-B3LYP": 0.18,
+                              "rCAM-B3LYP-D3(0)": 0.18,
+                              "HSE-HJS": 0.25,
+                              "HSE-HJS-D3(BJ)": 0.25,
                               "wB97X": 0.16,
                               "wB97XD": 0.22,
                               "wB97XD3": 0.20,
                               "wB97XV": 0.17,
+                              "wM06-D3": 0.27,
+                              "M06-SX": 0.34,
+                              "M06-SX-D3(0)": 0.34,
                               "M11": 0.43,
+                              "M11-D3(0)": 0.43,
+                              "revM11": 0.23,
+                              "revM11-D3(0)": 0.23,
                               "wB97M-V": 0.15}
           }
 
-SMALL_SIZE = 12
-MEDIUM_SIZE = 14
-LARGE_SIZE = 18
+SMALL_SIZE = 16
+MEDIUM_SIZE = 18
+LARGE_SIZE = 20
 
 plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 # plt.rc('title', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
@@ -46,7 +64,7 @@ plt.rc('axes', labelsize=LARGE_SIZE, titlesize=LARGE_SIZE)    # fontsize of the 
 plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 
-base_dir = "/Users/ewcss/data/ssbt/20220211_benchmark"
+base_dir = "../data/results/new"
 
 colors = {"global": "#8487B1", "range-separated": "#A9FADB"}
 
@@ -66,7 +84,7 @@ with open(os.path.join(base_dir, "abserrs_vacuum.csv")) as file:
         if "CAM" in funct:
             print(funct)
 
-        # if funct == "M06-HF" or funct == "B3LYP":
+        # if funct in ["M06-HF", "M06-HF-D3(0)", "revM11-D3(0)", "TPSSh-D3(BJ)", "TPSSh"]:
         #     continue
 
         avg = float(row[-1])
@@ -86,7 +104,7 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
         funct = row[0]
         avg = float(row[-1])
 
-        # if funct == "M06-HF" or funct == "B3LYP":
+        # if funct in ["M06-HF", "M06-HF-D3(0)", "revM11-D3(0)"]:
         #     continue
 
         for group, functs in hybrid.items():
@@ -131,7 +149,7 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
 #                 break
 
 
-fig, axs = plt.subplots(2, 2, figsize=(10, 6))
+fig, axs = plt.subplots(2, 2, figsize=(12, 10))
 
 for i, dset in enumerate([vac_mae, vac_rel]):
     print(i)
@@ -186,14 +204,15 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     fitx = np.linspace(0.1, 0.6, 100)
     fity = fitx * gres.slope + gres.intercept
 
-    ax.plot(fitx, fity, c="black")
+    # if i == 0:
+    #     ax.plot(fitx, fity, c="black")
 
-    ax.scatter(gx, gy, c=colors["global"], edgecolors="black")
-    ax.scatter(rsx, rsy, c=colors["range-separated"], edgecolors="black")
+    ax.scatter(gx, gy, c=colors["global"], edgecolors="black", alpha=0.8)
+    ax.scatter(rsx, rsy, c=colors["range-separated"], edgecolors="black", alpha=0.8)
 
     ax.set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
 
-plt.tight_layout()
-fig.savefig("hf_exchange_fraction.png", dpi=150)
+plt.tight_layout(pad=3)
+fig.savefig("hf_exchange_fraction.png", dpi=200)
 
-# plt.show()
+plt.show()

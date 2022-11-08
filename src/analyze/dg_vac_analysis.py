@@ -1,7 +1,7 @@
 import csv
 import os
 
-base_dir = "../data/results/new"
+base_dir = "../data/results/dg"
 
 vac_mae = dict()
 vac_rel = dict()
@@ -62,7 +62,7 @@ final = list()
 for name, values in sorted_compiled:
     total = [name]
     for i in range(2):
-        total.append("{:.3f}".format(values[2 * i]))
+        total.append(str(round(values[2 * i], 3)))
         total.append(str(values[2 * i + 1] + 1))
     final.append(total)
 
