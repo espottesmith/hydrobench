@@ -3,6 +3,8 @@ import os
 import difflib
 import statistics
 
+from collections import defaultdict
+
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -18,6 +20,11 @@ plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 
 base_dir = "../data/results/new"
+
+methods = {"GGA": ["PBE", "PBE-D3(BJ)", "BLYP", "BLYP-D3(BJ)", "B97-D", "B97-D3", "mPW91", "mPW91-D3(BJ)", "VV10", "rVV10",],
+           "meta-GGA": ["M06-L", "M06-L-D3(0)", "SCAN", "SCAN-D3(BJ)", "TPSS", "TPSS-D3(BJ)", "MN12-L", ("MN12-L-D3(BJ)"), "B97M-rV",],
+           "hybrid GGA": ["PBE0", "PBE0-D3(BJ)", "LRC-wPBE", "LRC-wPBE-D3(BJ)", "LRC-wPBEh", "LRC-wPBEh-D3(BJ)", "B3LYP", "B3LYP-D3(BJ)", "CAM-B3LYP", "CAM-B3LYP-D3(0)", "rCAM-B3LYP", "rCAM-B3LYP-D3(0)", "mPW1PW91", "mPW1PW91-D3(BJ)", "HSE-HJS", "HSE-HJS-D3(BJ)", "wB97X", "wB97XD", "wB97XD3", "wB97XV",],
+           "hybrid meta-GGA": ["M06-2X", "M06-2X-D3(0)", "wM06-D3", "M06-SX", "M06-SX-D3(BJ)", "M06-HF", "M06-HF-D3(0)", "M08-SO", "M08-SO-D3(0)", "M11", "M11-D3(0)", "revM11", "revM11-D3(0)", "MN15", "MN15-D3(0)", "BMK", "BMK-D3(BJ)", "TPSSh", "TPSSh-D3(BJ)", "SCAN0", "SCAN0-D3(BJ)", "mPWB1K", "mPWB1K-D3(BJ)", "wB97M-V"]}
 
 re_bases = {
     "PBE": {"D3": "PBE-D3(BJ)"},
@@ -49,7 +56,8 @@ re_bases = {
     "revM11": {"D3": "revM11-D3(0)"},
 }
 
-colors = {"D2": "#64A6BD", "D3": "#573280", "VV10": "#F896D8"}
+shapes = {"D2": "v", "D3": "o", "VV10": "P"}
+colors = {"GGA": "#ff595e", "meta-GGA": "#ffca3a", "hybrid GGA": "#8ac926", "hybrid meta-GGA": "#1982c4"}
 
 lims = [(0.03, 0.2), (0.1, 0.8)]
 
@@ -101,8 +109,8 @@ for i, dset in enumerate([vac_mae, vac_rel]):
 
     ax.set_ylabel("Change in error (eV)")
 
-    xs = {"D2": list(), "D3": list(), "VV10": list()}
-    ys = {"D2": list(), "D3": list(), "VV10": list()}
+    xs = {"D2": defaultdict(list), "D3": defaultdict(list), "VV10": defaultdict(list)}
+    ys = {"D2": defaultdict(list), "D3": defaultdict(list), "VV10": defaultdict(list)}
 
     for base, subs in re_bases.items():
         if i == 0:
@@ -110,15 +118,20 @@ for i, dset in enumerate([vac_mae, vac_rel]):
         else:
             this_data = vac_rel
 
+        this_group = None
+        for gname, group in methods.items():
+            if base in group:
+                this_group = gname
+
         base_error = this_data.get(base)
         for disp in ["D2", "D3", "VV10"]:
             if disp in subs:
                 disp_error = this_data.get(subs[disp])
                 try:                    
                     diff_error = disp_error - base_error
-                    xs[disp].append(base_error)
-                    ys[disp].append(diff_error)
-                    print(base, disp, diff_error)
+                    xs[disp][this_group].append(base_error)
+                    ys[disp][this_group].append(diff_error)
+                    print(base, disp, group, diff_error)
                 except TypeError:
                     print(base, subs[disp])
 
@@ -129,12 +142,13 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     if i == 0:
         ax.set_xticks([0.05, 0.1, 0.15, 0.2])
 
-    ax.scatter(xs["D2"], ys["D2"], c=colors["D2"], edgecolors="black", alpha=0.8, label="D2", s=60)
-    ax.scatter(xs["D3"], ys["D3"], c=colors["D3"], edgecolors="black", alpha=0.8, label="D3", s=60)
-    ax.scatter(xs["VV10"], ys["VV10"], c=colors["VV10"], edgecolors="black", alpha=0.8, label="VV10", s=60)
+    for group in methods:
+        ax.scatter(xs["D2"][group], ys["D2"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-D2", s=60, marker=shapes["D2"])
+        ax.scatter(xs["D3"][group], ys["D3"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-D3", s=60, marker=shapes["D3"])
+        ax.scatter(xs["VV10"][group], ys["VV10"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-VV10", s=60, marker=shapes["VV10"])
 
 plt.tight_layout()
 # plt.legend()
 
-# fig.savefig("sp_dispersion_effect_v2.png", dpi=200)
+fig.savefig("sp_dispersion_effect_v3.png", dpi=200)
 # plt.show()
