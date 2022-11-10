@@ -130,4 +130,4 @@ dmypy.json
 
 *.idea
 *.png
-src/data/dft/new/dft_sp.json
+*/dft_sp.json
