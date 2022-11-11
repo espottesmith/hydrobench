@@ -55,8 +55,8 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
         funct = row[0]
         avg = float(row[-1])
 
-        # if funct == "M06-HF" or funct == "M06-HF-D3(0)" or funct == "LRC-wPBEh-D3(BJ)":            
-        #     continue                                         
+        if funct == "M06-HF" or funct == "M06-HF-D3(0)":            
+            continue                                         
 
         for group, functs in methods.items():
             if funct in functs:
@@ -131,7 +131,7 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     # ax2 = ax.twinx()
 
     bp = ax.boxplot(data, labels=xs, patch_artist=True)
-    for patch, color in zip(bp['boxes'], ["#ff595e", "#ffca3a", "#8ac926", "#1982c4"]):
+    for patch, color in zip(bp['boxes'], ["#D81B60", "#FFC107", "#004D40", "#1E88E5"]):
         patch.set_facecolor(color)
 
     for median in bp['medians']:
@@ -140,7 +140,6 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     # ax.set_xticks(rotation=30, ha="right")
     # ax.set_xticklabels(xs, rotation=30, ha="right")
 
-# plt.tight_layout()
-# fig.savefig("average_performance_sp_box.png", dpi=200)
-# #
-plt.show()
+plt.tight_layout()
+# fig.savefig("performance_classes_main.png", dpi=300)
+# plt.show()

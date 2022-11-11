@@ -57,7 +57,7 @@ re_bases = {
 }
 
 shapes = {"D2": "v", "D3": "o", "VV10": "P"}
-colors = {"GGA": "#ff595e", "meta-GGA": "#ffca3a", "hybrid GGA": "#8ac926", "hybrid meta-GGA": "#1982c4"}
+colors = {"GGA": "#D81B60", "meta-GGA": "#FFC107", "hybrid GGA": "#004D40", "hybrid meta-GGA": "#1E88E5"}
 
 lims = [(0.03, 0.2), (0.1, 0.8)]
 

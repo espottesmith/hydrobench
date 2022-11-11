@@ -15,7 +15,7 @@ plt.rc('axes', labelsize=LARGE_SIZE, titlesize=LARGE_SIZE)    # fontsize of the 
 plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 
-base_dir = "../data/results/new"
+base_dir = "../data/results/dg"
 
 methods = {"GGA": ["PBE", "PBE-D3(BJ)", "BLYP", "BLYP-D3(BJ)", "B97-D", "B97-D3", "mPW91", "mPW91-D3(BJ)", "VV10", "rVV10",],
            "meta-GGA": ["M06-L", "M06-L-D3(0)", "SCAN", "SCAN-D3(BJ)", "TPSS", "TPSS-D3(BJ)", "MN12-L", ("MN12-L-D3(BJ)"), "B97M-rV",],
@@ -24,8 +24,10 @@ methods = {"GGA": ["PBE", "PBE-D3(BJ)", "BLYP", "BLYP-D3(BJ)", "B97-D", "B97-D3"
 
 vac_mae = {x: dict() for x in methods}
 vac_rel = {x: dict() for x in methods}
+pcm_mae = {x: dict() for x in methods}
+pcm_rel = {x: dict() for x in methods}
 
-with open(os.path.join(base_dir, "errs_vacuum.csv")) as file:
+with open(os.path.join(base_dir, "abserrs_vacuum.csv")) as file:
     reader = csv.reader(file)
     for i, row in enumerate(reader):
         if i == 0:
@@ -34,7 +36,7 @@ with open(os.path.join(base_dir, "errs_vacuum.csv")) as file:
             continue
         funct = row[0]
 
-        # if funct == "M06-HF" or funct == "M06-HF-D3(0)" or funct == "B3LYP-D3(BJ)" or funct == "TPSSh" or funct == "TPSSh-D3(BJ)":
+        # if funct == "M06-HF" or funct == "M06-HF-D3(0)":
         #     continue
 
         avg = float(row[-1])
@@ -43,7 +45,7 @@ with open(os.path.join(base_dir, "errs_vacuum.csv")) as file:
             if funct in functs:
                 vac_mae[group][funct] = avg
 
-with open(os.path.join(base_dir, "errs_rel_vacuum.csv")) as file:
+with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
     reader = csv.reader(file)
     for i, row in enumerate(reader):
         if i == 0:
@@ -53,12 +55,46 @@ with open(os.path.join(base_dir, "errs_rel_vacuum.csv")) as file:
         funct = row[0]
         avg = float(row[-1])
 
-        # if funct == "M06-HF" or funct == "M06-HF-D3(0)" or funct == "mPW91-D3(BJ)" or funct == "BLYP" or funct == "SCAN0-D3(BJ)" or funct == "PBE-D3(BJ)":            
+        # if funct == "M06-HF" or funct == "M06-HF-D3(0)" or funct == "LRC-wPBEh-D3(BJ)":            
         #     continue                                         
 
         for group, functs in methods.items():
             if funct in functs:
                 vac_rel[group][funct] = avg
+
+# with open(os.path.join(base_dir, "abserrs_IEF-PCM.csv")) as file:
+#     reader = csv.reader(file)
+#     for i, row in enumerate(reader):
+#         if i == 0:
+#             continue
+#         elif row[0].lower() == "average" or "3c" in row[0].lower():
+#             continue
+#         funct = row[0]
+#         avg = float(row[-1])
+#
+#         # if funct == "M06-HF":
+#         #     continue
+#
+#         for group, functs in methods.items():
+#             if funct in functs:
+#                 pcm_mae[group][funct] = avg
+#
+# with open(os.path.join(base_dir, "abserrs_rel_IEF-PCM.csv")) as file:
+#     reader = csv.reader(file)
+#     for i, row in enumerate(reader):
+#         if i == 0:
+#             continue
+#         elif row[0].lower() == "average" or "3c" in row[0].lower():
+#             continue
+#         funct = row[0]
+#         avg = float(row[-1])
+#
+#         # if funct == "M06-HF":
+#         #     continue
+#
+#         for group, functs in methods.items():
+#             if funct in functs:
+#                 pcm_rel[group][funct] = avg
 
 
 fig, axs = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
@@ -67,9 +103,9 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     ax = axs[i]
 
     if i == 0:
-        ax.set_ylabel("MSE (eV)")
+        ax.set_ylabel("MAE (eV)")
     else:
-        ax.set_ylabel("MRSE (unitless)")
+        ax.set_ylabel("MRAE (unitless)")
 
     xs = ["GGA", "meta-GGA", "hybrid GGA", "hybrid meta-GGA"]
     avgs = list()
@@ -104,7 +140,7 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     # ax.set_xticks(rotation=30, ha="right")
     # ax.set_xticklabels(xs, rotation=30, ha="right")
 
-plt.tight_layout()
-fig.savefig("performance_classes_err.png", dpi=300)
+# plt.tight_layout()
+fig.savefig("performance_classes_de.png", dpi=300)
 # #
 # plt.show()
