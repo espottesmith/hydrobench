@@ -185,7 +185,7 @@ for i, dset in enumerate([vac_mae, vac_rel]):
 
     bp = bax.boxplot([sorted(list(dset["global"].values())),
                       sorted(list(dset["range-separated"].values()))],
-                     labels=["Global", "Range-separted"],
+                     labels=["Global", "Range-separated"],
                      patch_artist=True,
                      widths=0.6)
 
@@ -213,6 +213,6 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     ax.set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
 
 plt.tight_layout(pad=3)
-fig.savefig("hf_exchange_fraction.png", dpi=200)
+fig.savefig("hf_exchange_fraction.png", dpi=300)
 
 plt.show()
