@@ -55,8 +55,8 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
         funct = row[0]
         avg = float(row[-1])
 
-        if funct == "M06-HF" or funct == "M06-HF-D3(0)":            
-            continue                                         
+        # if funct == "M06-HF" or funct == "M06-HF-D3(0)":            
+        #     continue                                         
 
         for group, functs in methods.items():
             if funct in functs:
@@ -120,8 +120,8 @@ for i, dset in enumerate([vac_mae, vac_rel]):
         avgs.append(avg)
         group_sort = sorted(dset[group].items(), key=lambda x: x[1])
         print("\t min: {} ({}) max: {} ({}) avg: {}".format(group_sort[0][0], group_sort[0][1],
-                                                    group_sort[-1][0], group_sort[-1][1],
-                                                        avg))
+                                                            group_sort[-1][0], group_sort[-1][1],
+                                                            avg))
         lowlims.append(abs(avg - group_sort[0][1]))
         uplims.append(abs(avg - group_sort[-1][1]))
 
@@ -142,4 +142,4 @@ for i, dset in enumerate([vac_mae, vac_rel]):
 
 plt.tight_layout()
 # fig.savefig("performance_classes_main.png", dpi=300)
-# plt.show()
+plt.show()

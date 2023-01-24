@@ -6,6 +6,7 @@ import statistics
 import numpy as np
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 
 SMALL_SIZE = 16
 MEDIUM_SIZE = 18
@@ -80,8 +81,19 @@ with open(os.path.join(dg_dir, "abserrs_rel_vacuum.csv")) as file:
 
 fig, ax = plt.subplots(1, 2, figsize=(12, 6))
 
-xs0 = np.linspace(0.02, 0.23, 100)
+xs0 = np.linspace(0.00, 0.25, 100)
 ax[0].plot(xs0, xs0, '--k')
+ax[0].set_xlim(0, 0.25)
+ax[0].set_ylim(0, 0.25)
+ax[0].fill_between(xs0, xs0 * 1.5, xs0 * 2, color="#DCDCDC")
+ax[0].fill_between(xs0, xs0 / 2, xs0 / 1.5, color="#DCDCDC")
+ax[0].fill_between(xs0, xs0 * 2, xs0 * 3, color="#C0C0C0")
+ax[0].fill_between(xs0, xs0 / 3, xs0 / 2, color="#C0C0C0")
+ax[0].fill_between(xs0, xs0 * 3, xs0 * 5, color="#808080")
+ax[0].fill_between(xs0, xs0 / 5, xs0 / 3, color="#808080")
+ax[0].fill_between(xs0, xs0 * 5, 0.3, color="#696969")
+ax[0].fill_between(xs0, -0.1, xs0 / 5, color="#696969")
+
 
 for group, functionals in methods.items():
     print(group)
@@ -94,7 +106,7 @@ for group, functionals in methods.items():
         xs.append(data["dg"])
         ys.append(data["barrier"])
     
-    ax[0].scatter(xs, ys, color=color, alpha=0.7, label=group)
+    ax[0].scatter(xs, ys, color=color, alpha=0.8, edgecolors="black", s=80, label=group)
 
 ax[0].set_xlabel(r"MAE$_{\Delta E}$ (eV)")
 ax[0].set_ylabel(r"MAE$_{\Delta E^‡}$ (eV)")
@@ -103,8 +115,19 @@ ax[0].set_aspect("equal", "box")
 print()
 print()
 
-xs1 = np.linspace(0.05, 0.9, 100)
+xs1 = np.linspace(0.00, 0.9, 100)
 ax[1].plot(xs1, xs1, '--k')
+ax[1].set_xlim(0, 0.9)
+ax[1].set_ylim(0, 0.9)
+ax[1].fill_between(xs1, xs1 * 1.5, xs1 * 2, color="#DCDCDC")
+ax[1].fill_between(xs1, xs1 / 2, xs1 / 1.5, color="#DCDCDC")
+ax[1].fill_between(xs1, xs1 * 2, xs1 * 3, color="#C0C0C0")
+ax[1].fill_between(xs1, xs1 / 3, xs1 / 2, color="#C0C0C0")
+ax[1].fill_between(xs1, xs1 * 3, xs1 * 5, color="#808080")
+ax[1].fill_between(xs1, xs1 / 5, xs1 / 3, color="#808080")
+ax[1].fill_between(xs1, xs1 * 5, 1.0, color="#696969")
+ax[1].fill_between(xs1, -0.1, xs1 / 5, color="#696969")
+
 
 for group, functionals in methods.items():
     print(group)
@@ -116,14 +139,20 @@ for group, functionals in methods.items():
         print("\t", f, data)
         xs.append(data["dg"])
         ys.append(data["barrier"])
-    
-    ax[1].scatter(xs, ys, color=color, alpha=0.7, label=group)
+
+    ax[1].scatter(xs, ys, color=color, alpha=0.8, edgecolors="black", s=80, label=group)
 
 ax[1].set_xlabel(r"MRAE$_{\Delta E}$ (unitless)")
 ax[1].set_ylabel(r"MRAE$_{\Delta E^‡}$ (unitless)")
 ax[1].set_aspect("equal", "box")
 
+ax[0].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+ax[1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
+ax[0].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+ax[1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
 # ax[1].legend()
 plt.tight_layout()
 fig.savefig("dg_vs_dgdag_eq.png", dpi=300)
-# plt.show()
+plt.show()

@@ -80,8 +80,10 @@ with open(os.path.join(dg_dir, "abserrs_rel_vacuum.csv")) as file:
 
 fig, ax = plt.subplots(2, 1, figsize=(8, 10))
 
-xs0 = np.linspace(0.02, 0.23, 100)
+xs0 = np.linspace(0.00, 0.25, 100)
 ax[0].plot(xs0, xs0, '--k')
+ax[0].set_xlim(0, 0.25)
+ax[0].set_ylim(0, 0.25)
 
 for group, functionals in methods.items():
     print(group)
@@ -102,8 +104,11 @@ ax[0].set_ylabel(r"MAE$_{\Delta E^‡}$ (eV)")
 print()
 print()
 
-xs1 = np.linspace(0.05, 0.9, 100)
+xs1 = np.linspace(0.00, 0.9, 100)
+ax[1].set_xlim(0, 0.9)
+ax[1].set_ylim(0, 0.9)
 ax[1].plot(xs1, xs1, '--k')
+
 
 for group, functionals in methods.items():
     print(group)
@@ -115,7 +120,7 @@ for group, functionals in methods.items():
         print("\t", f, data)
         xs.append(data["dg"])
         ys.append(data["barrier"])
-    
+
     ax[1].scatter(xs, ys, color=color, alpha=0.7, label=group)
 
 ax[1].set_xlabel(r"MRAE$_{\Delta E}$ (unitless)")
@@ -123,5 +128,5 @@ ax[1].set_ylabel(r"MRAE$_{\Delta E^‡}$ (unitless)")
 
 # ax[1].legend()
 plt.tight_layout()
-fig.savefig("dg_vs_dgdag.png", dpi=300)
-# plt.show()
+# fig.savefig("dg_vs_dgdag.png", dpi=300)
+plt.show()

@@ -66,7 +66,7 @@ plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 
 base_dir = "../data/results/new"
 
-colors = {"global": "#8487B1", "range-separated": "#A9FADB"}
+colors = {"global": "#E1BE6A", "range-separated": "#40B0A6"}
 
 vac_mae = {x: dict() for x in hybrid}
 vac_rel = {x: dict() for x in hybrid}
@@ -183,6 +183,41 @@ for i, dset in enumerate([vac_mae, vac_rel]):
         rsx.append(hybrid["range-separated"][funct])
         rsy.append(dset["range-separated"][funct])
 
+    global_values = np.array(list(dset["global"].values()))
+    rs_values = np.array(list(dset["range-separated"].values()))
+
+    q1_global = np.quantile(global_values, 0.25)
+    q3_global = np.quantile(global_values, 0.75)
+    med_global = np.median(global_values)
+    iqr_global = q3_global - q1_global
+    upper_bound_global = q3_global + (1.5 * iqr_global)
+    lower_bound_global = q1_global - (1.5 * iqr_global)
+
+    outliers_global = list()
+    for n, v in dset["global"].items():
+        if v <= lower_bound_global or v >= upper_bound_global:
+            outliers_global.append((n, v))
+
+    q1_rs = np.quantile(rs_values, 0.25)
+    q3_rs = np.quantile(rs_values, 0.75)
+    med_rs = np.median(rs_values)
+    iqr_rs = q3_rs - q1_rs
+    upper_bound_rs = q3_rs + (1.5 * iqr_rs)
+    lower_bound_rs = q1_rs - (1.5 * iqr_rs)
+
+    outliers_rs = list()
+    for n, v in dset["range-separated"].items():
+        if v <= lower_bound_rs or v >= upper_bound_rs:
+            outliers_rs.append((n, v))
+
+    print("GLOBAL")
+    for x in outliers_global:
+        print(x)
+    print("\n\nRANGE-SEPARATED")
+    for x in outliers_rs:
+        print(x)
+    print("\n\n")
+
     bp = bax.boxplot([sorted(list(dset["global"].values())),
                       sorted(list(dset["range-separated"].values()))],
                      labels=["Global", "Range-separated"],
@@ -207,8 +242,8 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     # if i == 0:
     #     ax.plot(fitx, fity, c="black")
 
-    ax.scatter(gx, gy, c=colors["global"], edgecolors="black", alpha=0.8)
-    ax.scatter(rsx, rsy, c=colors["range-separated"], edgecolors="black", alpha=0.8)
+    ax.scatter(gx, gy, c=colors["global"], edgecolors="black", alpha=0.8, s=80)
+    ax.scatter(rsx, rsy, c=colors["range-separated"], edgecolors="black", alpha=0.8, s=80)
 
     ax.set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
 

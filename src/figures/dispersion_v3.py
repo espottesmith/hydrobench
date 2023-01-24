@@ -143,9 +143,9 @@ for i, dset in enumerate([vac_mae, vac_rel]):
         ax.set_xticks([0.05, 0.1, 0.15, 0.2])
 
     for group in methods:
-        ax.scatter(xs["D2"][group], ys["D2"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-D2", s=60, marker=shapes["D2"])
-        ax.scatter(xs["D3"][group], ys["D3"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-D3", s=60, marker=shapes["D3"])
-        ax.scatter(xs["VV10"][group], ys["VV10"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-VV10", s=60, marker=shapes["VV10"])
+        ax.scatter(xs["D2"][group], ys["D2"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-D2", s=80, marker=shapes["D2"])
+        ax.scatter(xs["D3"][group], ys["D3"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-D3", s=80, marker=shapes["D3"])
+        ax.scatter(xs["VV10"][group], ys["VV10"][group], c=colors[group], edgecolors="black", alpha=0.8, label=f"{group}-VV10", s=80, marker=shapes["VV10"])
 
 plt.tight_layout()
 # plt.legend()
