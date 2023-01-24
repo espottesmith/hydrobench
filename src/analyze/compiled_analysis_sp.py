@@ -1,7 +1,9 @@
 import csv
 import os
 
-base_dir = "../data/results/mp2_super"
+import difflib
+
+base_dir = "../data/results/new"
 
 vac_mae = dict()
 vac_rel = dict()
@@ -66,17 +68,17 @@ sorted_vac_rel = sorted(vac_rel.items(), key=lambda x: x[1])
 sorted_pcm_mae = sorted(pcm_mae.items(), key=lambda x: x[1])
 sorted_pcm_rel = sorted(pcm_rel.items(), key=lambda x: x[1])
 
-# rankings = list()
-# for l in [sorted_vac_mae, sorted_vac_rel, sorted_pcm_mae, sorted_pcm_rel]:
-#     rankings.append([x[0] for x in l])
-#
-# print("VAC MAE vs. REL", difflib.SequenceMatcher(None, rankings[0], rankings[1]).ratio())
-# print("PCM MAE vs. REL", difflib.SequenceMatcher(None, rankings[2], rankings[3]).ratio())
-# print("VAC MAE vs. PCM", difflib.SequenceMatcher(None, rankings[0], rankings[2]).ratio())
-# print("VAC REL vs. PCM", difflib.SequenceMatcher(None, rankings[1], rankings[3]).ratio())
-#
-# for r in rankings:
-#     print(r)
+rankings = list()
+for l in [sorted_vac_mae, sorted_vac_rel, sorted_pcm_mae, sorted_pcm_rel]:
+    rankings.append([x[0] for x in l])
+
+print("VAC MAE vs. REL", difflib.SequenceMatcher(None, rankings[0], rankings[1]).ratio())
+print("PCM MAE vs. REL", difflib.SequenceMatcher(None, rankings[2], rankings[3]).ratio())
+print("VAC MAE vs. PCM", difflib.SequenceMatcher(None, rankings[0], rankings[2]).ratio())
+print("VAC REL vs. PCM", difflib.SequenceMatcher(None, rankings[1], rankings[3]).ratio())
+
+for r in rankings:
+    print(r)
 
 compiled = dict()
 

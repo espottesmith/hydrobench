@@ -15,12 +15,12 @@ plt.rc('axes', labelsize=LARGE_SIZE, titlesize=LARGE_SIZE)    # fontsize of the 
 plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
 
-base_dir = "/Users/ewcss/data/ssbt/20220211_benchmark"
+base_dir = "../data/results/new"
 
-methods = {"GGA": ["PBE", "PBE-D3(BJ)", "BLYP", "BLYP-D3(BJ)", "B97-D", "B97-D3", "mPW91", "mPW91-D3(BJ)", "VV10", "rVV10"],
-            "meta-GGA": ["M06-L", "M06-L-D3(0)", "SCAN", "SCAN-D3(BJ)", "TPSS", "TPSS-D3(BJ)", "MN12-L", "MN12-L-D3(BJ)", "B97M-rV"],
-            "hybrid GGA": ["PBE0", "PBE0-D3(BJ)", "B3LYP", "B3LYP-D3(BJ)", "CAM-B3LYP", "CAM-B3LYP-D3(0)", "mPW1PW91", "mPW1PW91-D3(BJ)", "wB97X", "wB97XD", "wB97XD3", "wB97XV"],
-            "hybrid meta-GGA": ["M06-2X", "M06-2X-D3(0)", "M06-HF", "M08-SO", "M11", "MN15", "BMK", "BMK-D3(BJ)", "TPSSh", "TPSSh-D3(BJ)", "SCAN0", "mPWB1K", "mPWB1K-D3(BJ)", "wB97M-V"]}
+methods = {"GGA": ["PBE", "PBE-D3(BJ)", "BLYP", "BLYP-D3(BJ)", "B97-D", "B97-D3", "mPW91", "mPW91-D3(BJ)", "VV10", "rVV10",],
+           "meta-GGA": ["M06-L", "M06-L-D3(0)", "SCAN", "SCAN-D3(BJ)", "TPSS", "TPSS-D3(BJ)", "MN12-L", ("MN12-L-D3(BJ)"), "B97M-rV",],
+           "hybrid GGA": ["PBE0", "PBE0-D3(BJ)", "LRC-wPBE", "LRC-wPBE-D3(BJ)", "LRC-wPBEh", "LRC-wPBEh-D3(BJ)", "B3LYP", "B3LYP-D3(BJ)", "CAM-B3LYP", "CAM-B3LYP-D3(0)", "rCAM-B3LYP", "rCAM-B3LYP-D3(0)", "mPW1PW91", "mPW1PW91-D3(BJ)", "HSE-HJS", "HSE-HJS-D3(BJ)", "wB97X", "wB97XD", "wB97XD3", "wB97XV",],
+           "hybrid meta-GGA": ["M06-2X", "M06-2X-D3(0)", "wM06-D3", "M06-SX", "M06-SX-D3(BJ)", "M06-HF", "M06-HF-D3(0)", "M08-SO", "M08-SO-D3(0)", "M11", "M11-D3(0)", "revM11", "revM11-D3(0)", "MN15", "MN15-D3(0)", "BMK", "BMK-D3(BJ)", "TPSSh", "TPSSh-D3(BJ)", "SCAN0", "SCAN0-D3(BJ)", "mPWB1K", "mPWB1K-D3(BJ)", "wB97M-V"]}
 
 vac_mae = {x: dict() for x in methods}
 vac_rel = {x: dict() for x in methods}
@@ -36,8 +36,8 @@ with open(os.path.join(base_dir, "abserrs_vacuum.csv")) as file:
             continue
         funct = row[0]
 
-        if funct == "M06-HF" or funct == "B3LYP":
-            continue
+        # if funct == "M06-HF" or funct == "M06-HF-D3(0)":
+        #     continue
 
         avg = float(row[-1])
 
@@ -55,8 +55,8 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
         funct = row[0]
         avg = float(row[-1])
 
-        if funct == "M06-HF" or funct == "B3LYP":            
-            continue                                         
+        # if funct == "M06-HF" or funct == "M06-HF-D3(0)":            
+        #     continue                                         
 
         for group, functs in methods.items():
             if funct in functs:
@@ -120,8 +120,8 @@ for i, dset in enumerate([vac_mae, vac_rel]):
         avgs.append(avg)
         group_sort = sorted(dset[group].items(), key=lambda x: x[1])
         print("\t min: {} ({}) max: {} ({}) avg: {}".format(group_sort[0][0], group_sort[0][1],
-                                                    group_sort[-1][0], group_sort[-1][1],
-                                                        avg))
+                                                            group_sort[-1][0], group_sort[-1][1],
+                                                            avg))
         lowlims.append(abs(avg - group_sort[0][1]))
         uplims.append(abs(avg - group_sort[-1][1]))
 
@@ -131,7 +131,7 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     # ax2 = ax.twinx()
 
     bp = ax.boxplot(data, labels=xs, patch_artist=True)
-    for patch, color in zip(bp['boxes'], ["#ff595e", "#ffca3a", "#8ac926", "#1982c4"]):
+    for patch, color in zip(bp['boxes'], ["#D81B60", "#FFC107", "#004D40", "#1E88E5"]):
         patch.set_facecolor(color)
 
     for median in bp['medians']:
@@ -141,6 +141,5 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     # ax.set_xticklabels(xs, rotation=30, ha="right")
 
 plt.tight_layout()
-# fig.savefig("average_performance_sp_box.png", dpi=150)
-#
-# plt.show()
+# fig.savefig("performance_classes_main.png", dpi=300)
+plt.show()
