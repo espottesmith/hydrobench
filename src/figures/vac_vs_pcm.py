@@ -95,7 +95,7 @@ for group, functionals in methods.items():
         xs.append(v)
         ys.append(p)
     
-    ax[0].scatter(xs, ys, color=color, alpha=0.7, label=group)
+    ax[0].scatter(xs, ys, color=color, alpha=0.8, s=80, edgecolor="black", label=group)
 
 
 xs1 = np.linspace(0.05, 0.35, 100)
@@ -111,7 +111,7 @@ for group, functionals in methods.items():
         xs.append(v)
         ys.append(p)
     
-    ax[1].scatter(xs, ys, color=color, alpha=0.7, label=group)
+    ax[1].scatter(xs, ys, color=color, alpha=0.8, s=80, edgecolor="black", label=group)
 
 ax[0].set_xlabel(r"MAE$_{vacuum}$ (eV)")
 ax[0].set_ylabel(r"MAE$_{IEF-PCM}$ (eV)")

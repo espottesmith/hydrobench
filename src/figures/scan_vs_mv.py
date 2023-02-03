@@ -94,7 +94,7 @@ for group, functionals in methods.items():
         xs.append(data["scan"])
         ys.append(data["mv"])
     
-    ax[0].scatter(xs, ys, color=color, alpha=0.7, label=group)
+    ax[0].scatter(xs, ys, color=color, alpha=0.8, s=80, edgecolor="black", label=group)
 
 ax[0].set_xlabel(r"MAE$_{SCAN}$ (eV)")
 ax[0].set_ylabel(r"MAE$_{\omega B97M-V}$ (eV)")
@@ -117,7 +117,7 @@ for group, functionals in methods.items():
         xs.append(data["scan"])
         ys.append(data["mv"])
     
-    ax[1].scatter(xs, ys, color=color, alpha=0.7, label=group)
+    ax[1].scatter(xs, ys, color=color, alpha=0.8, s=80, edgecolor="black", label=group)
 
 ax[1].set_xlabel(r"MRAE$_{SCAN}$ (eV)")
 ax[1].set_ylabel(r"MRAE$_{\omega B97M-V}$ (eV)")

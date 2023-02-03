@@ -36,8 +36,8 @@ with open(os.path.join(base_dir, "abserrs_vacuum.csv")) as file:
             continue
         funct = row[0]
 
-        # if funct == "M06-HF" or funct == "M06-HF-D3(0)":
-        #     continue
+        if funct in ["BLYP-D3(BJ)", "BLYP", "M06-HF", "M06-HF-D3(0)", "TPSS", "TPSS-D3(BJ)"]:
+            continue
 
         avg = float(row[-1])
 
@@ -55,8 +55,8 @@ with open(os.path.join(base_dir, "abserrs_rel_vacuum.csv")) as file:
         funct = row[0]
         avg = float(row[-1])
 
-        # if funct == "M06-HF" or funct == "M06-HF-D3(0)":            
-        #     continue                                         
+        if funct in ["BLYP-D3(BJ)", "BLYP", "M06-HF", "M06-HF-D3(0)", "TPSS", "TPSS-D3(BJ)"]:
+            continue
 
         for group, functs in methods.items():
             if funct in functs:

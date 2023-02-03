@@ -1,7 +1,8 @@
 import csv
 import os
-import difflib
 import statistics
+
+import numpy as np
 
 import matplotlib.pyplot as plt
 
@@ -125,6 +126,25 @@ for i, dset in enumerate([vac_mae, vac_rel]):
         lowlims.append(abs(avg - group_sort[0][1]))
         uplims.append(abs(avg - group_sort[-1][1]))
 
+    for name, d in dset.items():
+        print(name)
+        array = np.array(list(d.values()))
+        q1 = np.quantile(array, 0.25)
+        q3 = np.quantile(array, 0.75)
+        med = np.median(array)
+        iqr = q3 - q1
+        upper_bound = q3 + (1.5 * iqr)
+        lower_bound = q1 - (1.5 * iqr)
+
+        outliers = list()
+        for n, v in d.items():
+            if v <= lower_bound or v >= upper_bound:
+                outliers.append((n, v))
+
+        for x in outliers:
+            print(x)
+        print("\n\n")
+
     # ax.bar(x=xs, height=avgs, yerr=[lowlims, uplims], color=["#ff595e", "#ffca3a", "#8ac926", "#1982c4"])
     # ax.bar(x=range(1, len(xs) + 1), height=avgs, tick_label=xs, color=["#ff595e", "#ffca3a", "#8ac926", "#1982c4"], align="center")
     # ax.set_xticklabels(xs, rotation=30, ha="right")
@@ -143,4 +163,4 @@ for i, dset in enumerate([vac_mae, vac_rel]):
 # plt.tight_layout()
 fig.savefig("performance_classes_de.png", dpi=300)
 # #
-# plt.show()
+plt.show()
