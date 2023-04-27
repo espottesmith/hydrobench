@@ -81,7 +81,7 @@ for sp in sp_data:
         elif dft_d.upper() == "D3_ZERO":
             method += "-D3(0)"
     walltime = sp["walltime"]
-    cputime = sp["walltime"]
+    cputime = sp["cputime"]
     walltimes[method].append(walltime)
     cputimes[method].append(cputime)
 
@@ -93,6 +93,8 @@ for m, w in walltimes.items():
 for m, c in cputimes.items():
     cpu[m] = statistics.mean(c)
 
+for m, t in wall.items():
+    print(m, t, cpu[m])
 
 min_wall = min(wall.values())
 min_cpu = min(cpu.values())

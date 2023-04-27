@@ -119,11 +119,11 @@ for group, functionals in methods.items():
     
     ax[1].scatter(xs, ys, color=color, alpha=0.8, s=80, edgecolor="black", label=group)
 
-ax[1].set_xlabel(r"MRAE$_{SCAN}$ (eV)")
-ax[1].set_ylabel(r"MRAE$_{\omega B97M-V}$ (eV)")
+ax[1].set_xlabel(r"MRAE$_{SCAN}$ (unitless)")
+ax[1].set_ylabel(r"MRAE$_{\omega B97M-V}$ (unitless)")
 ax[1].set_aspect("equal", "box")
 
 # ax[1].legend()
 plt.tight_layout()
-fig.savefig("scan_vs_mv.png", dpi=300)
+fig.savefig("scan_vs_mv_v2.png", dpi=300)
 # plt.show()

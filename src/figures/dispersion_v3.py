@@ -107,7 +107,10 @@ for i, dset in enumerate([vac_mae, vac_rel]):
     else:
         ax.set_xlabel("Base MRAE (unitless)")
 
-    ax.set_ylabel("Change in error (eV)")
+    if i % 2 == 0:
+        ax.set_ylabel("Change in MAE (eV)")
+    else:
+        ax.set_ylabel("Change in MRAE (unitless)")
 
     xs = {"D2": defaultdict(list), "D3": defaultdict(list), "VV10": defaultdict(list)}
     ys = {"D2": defaultdict(list), "D3": defaultdict(list), "VV10": defaultdict(list)}
@@ -150,5 +153,5 @@ for i, dset in enumerate([vac_mae, vac_rel]):
 plt.tight_layout()
 # plt.legend()
 
-fig.savefig("sp_dispersion_effect_v3.png", dpi=200)
-# plt.show()
+fig.savefig("sp_dispersion_effect_v4.png", dpi=200)
+plt.show()
