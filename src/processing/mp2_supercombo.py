@@ -1,8 +1,8 @@
 from monty.serialization import loadfn, dumpfn
 
 
-mp2 = loadfn("../data/reference/mp2_corrected_full.json")
-cc = loadfn("../data/reference/grouped_cc_data.json")
+mp2 = loadfn("../data/reference/corrected/mp2_corrected_full.json")
+cc = loadfn("../data/reference/corrected/grouped_cc_data.json")
 
 new_data = dict()
 
@@ -12,4 +12,4 @@ for k, v in mp2.items():
             energy = v + (cc[k]["CCSD(T)_def2-TZVP"]["ccsdt_total"] - cc[k]["CCSD(T)_def2-TZVP"]["mp2"])
             new_data[k] = energy
 
-dumpfn(new_data, "../data/reference/mp2_super.json")
+dumpfn(new_data, "../data/reference/corrected/20230622_mp2_super.json")

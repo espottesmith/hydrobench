@@ -1,20 +1,29 @@
 import re
+import numpy as np
 
 from monty.serialization import loadfn, dumpfn
 
-from .utils import (correct_hf, correct_wft,
-                    alpha_svp_tzvp, alpha_tzvpp_qzvpp,
-                    beta_svp_tzvp, beta_tzvpp_qzvpp)
+alpha_svp_tzvp = 10.390
+alpha_tzvpp_qzvpp = 7.880
 
-hf = re.compile(r"\s+SCF energy\s+=\s+([\-\.0-9]+)")
-mp2 = re.compile(r"\s+MP2 energy\s+=\s+([\-\.0-9]+)")
-ccsd_corr = re.compile(r"\s+CCSD correlation energy\s+=\s+([\-\.0-9]+)")
-ccsd_total = re.compile(r"\s+CCSD total energy\s+=\s+([\-\.0-9]+)")
-ccsdt_corr = re.compile(r"\s+CCSD\(T\) correlation energy\s+=\s+([\-\.0-9]+)")
-ccsdt_total = re.compile(r"\s+CCSD\(T\) total energy\s+=\s+([\-\.0-9]+)")
+beta_svp_tzvp = 2.400
+beta_tzvpp_qzvpp = 2.970
+
+def correct_hf(e1, e2, n1, n2, alpha):
+    return e2 + (e2 - e1) / (np.exp(alpha * (np.sqrt(n2) - np.sqrt(n1))) - 1)
+
+def correct_wft(e1, e2, n1, n2, beta):
+    return (n1 ** beta * e1 - n2 ** beta * e2) / (n1 ** beta - n2 ** beta)
 
 
 all_data = loadfn("../data/reference/all_cc_data.json")
+corrected_data = loadfn("../data/reference/corrected/20230622_dumped_cc.json")
+
+for k, v in corrected_data.items():
+    new_k = k.replace("realts", "ts")
+    if new_k in all_data:
+        print("REPLACING", new_k)
+        all_data[new_k] = v
 
 groups = dict()
 
@@ -28,7 +37,7 @@ for name, data in all_data.items():
     else:
         groups[groupname][meth_basis] = data
 
-dumpfn(groups, "../data/reference/grouped_cc_data.json")
+dumpfn(groups, "../data/reference/corrected/grouped_cc_data.json")
 
 full_corrected_data = dict()
 
@@ -56,7 +65,7 @@ for groupname, groupdata in groups.items():
     except KeyError:
         continue
 
-dumpfn(full_corrected_data, "../data/reference/full_corrected_cc_data.json")
+dumpfn(full_corrected_data, "../data/reference/corrected/full_corrected_cc_data.json")
 
 # Not currently correcting HF or CCSD
 # Only applying an extrapolation to (T), due to issues with QZVPP calculations
@@ -74,7 +83,7 @@ for groupname, groupdata in groups.items():
     except KeyError:
         continue
 
-dumpfn(corrected_data, "../data/reference/corrected_t_cc_data.json")
+dumpfn(corrected_data, "../data/reference/corrected/corrected_t_cc_data.json")
 
 corrected_small_data = dict()
 for groupname, groupdata in groups.items():
@@ -101,7 +110,7 @@ for groupname, groupdata in groups.items():
     except KeyError:
         continue
 
-dumpfn(corrected_small_data, "../data/reference/corrected_small_cc_data.json")
+dumpfn(corrected_small_data, "../data/reference/corrected/corrected_small_cc_data.json")
 
 uncorrected_data = dict()
 for groupname, groupdata in groups.items():
@@ -111,4 +120,4 @@ for groupname, groupdata in groups.items():
     except KeyError:
         continue
 
-dumpfn(uncorrected_data, "../data/reference/uncorrected_cc_data.json")
+dumpfn(uncorrected_data, "../data/reference/corrected/uncorrected_cc_data.json")
